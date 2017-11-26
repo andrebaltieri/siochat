@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Socket.IO chat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.3.0/milligram.min.css">
+    <script src="https://unpkg.com/vue"></script>
+</head>
+
+<body>
+    <div id="app">
+        <ol>
+            <li v-for="message in messages">
+                {{ message.message }}
+            </li>
+        </ol>
+    </div>
+
+    <div id="app-5">
+        <input v-model="message">
+        <input v-model="to" placeholder="Para...">
+        <button v-on:click="send">Reverse Message</button>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+
+        socket.on('chat message', function (msg) {
+            app.messages.push(msg);
+        });
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                messages: []
+            }
+        });
+
+        var app5 = new Vue({
+            el: '#app-5',
+            data: { message: '', from: '', to: null },
+            methods: {
+                send: function () {
+                    socket.emit('chat message', { 
+                        message: this.message, 
+                        from: socket.id, 
+                        to: this.to 
+                    });
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>
